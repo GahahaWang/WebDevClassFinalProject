@@ -1,0 +1,313 @@
+/* 中間內容區 - 待辦清單 */
+.center-content {
+  background: #f5f7fa;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.header-title h2 {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.header-title p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.add-todo-btn {
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.add-todo-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.add-todo-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* 視圖切換按鈕和header操作區 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.view-toggle-btn {
+  width: 45px;
+  height: 45px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.view-toggle-btn svg {
+  width: 22px;
+  height: 22px;
+  color: #667eea;
+}
+
+.view-toggle-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.view-toggle-btn:active {
+  transform: translateY(0);
+}
+
+/* 統計區域 */
+.stats-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.chart-card-mini {
+  width: 120px;
+  height: 120px;
+}
+
+.stats-info {
+  display: flex;
+  gap: 2rem;
+  flex: 1;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.stat-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.stat-dot.completed {
+  background: #4facfe;
+}
+
+.stat-dot.pending {
+  background: #f5576c;
+}
+
+.stat-item strong {
+  color: #333;
+  font-size: 1.2rem;
+  margin-left: 0.3rem;
+}
+
+/* 篩選按鈕 */
+.filter-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.filter-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+}
+
+/* 待辦清單 */
+.todos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  background: white;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.todo-item:hover {
+  transform: translateX(3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.todo-item.selected {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.todo-item.completed {
+  opacity: 0.7;
+  border-left-color: #4facfe;
+}
+
+.todo-item.priority-high {
+  border-left-color: #f5576c;
+}
+
+.todo-item.priority-medium {
+  border-left-color: #f093fb;
+}
+
+.todo-item.priority-low {
+  border-left-color: #43e97b;
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.todo-content {
+  flex: 1;
+}
+
+.todo-text {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.assigned-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe6a0 100%);
+  color: #856404;
+  border-radius: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.todo-meta {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.priority-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.priority-high {
+  background: #ffe0e6;
+  color: #f5576c;
+}
+
+.priority-medium {
+  background: #fce4ff;
+  color: #f093fb;
+}
+
+.priority-low {
+  background: #d4f8e8;
+  color: #43e97b;
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #999;
+  display: none;
+  background: white;
+  border-radius: 15px;
+}
+
+.empty-state.show {
+  display: block;
+}
+
+.empty-state svg {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state span {
+  font-size: 0.85rem;
+}

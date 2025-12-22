@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>待辦清單系統</title>
+  <!-- 模組化CSS -->
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <div class="todo-container">
+    <!-- 頂部導航 -->
+    <header class="header">
+      <div class="header-content">
+        <button id="toggleTeamsBtn" class="toggle-teams-btn" title="我的團隊">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </button>
+        <h1>📝 團隊待辦清單系統</h1>
+        <div class="user-info">
+          <span id="welcomeText">歡迎，<strong id="headerUsername" class="clickable-username"></strong></span>
+          <button id="logoutBtn" class="logout-btn">登出</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主要內容區域 - 三欄式佈局 -->
+    <main class="main-layout">
+      <!-- 左側：團隊列表 -->
+      <aside class="left-sidebar">
+        <div class="sidebar-header">
+          <h2>我的團隊</h2>
+          <button id="addTeamBtn" class="icon-btn" title="新增團隊">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="teams-list" id="teamsList">
+          <div class="team-item active" data-team-id="null">
+            <div class="team-color" style="background: #999;"></div>
+            <div class="team-info">
+              <h3>個人任務</h3>
+              <p id="personalCount">0 個任務</p>
+            </div>
+          </div>
+          <!-- 團隊項目將動態插入這裡 -->
+        </div>
+      </aside>
+
+      <!-- 中間：待辦清單 -->
+      <section class="center-content" id="todoListView">
+        <div class="content-header">
+          <div class="header-title">
+            <h2 id="currentTeamName">個人任務</h2>
+            <p id="currentTeamDesc"></p>
+          </div>
+          <div class="header-actions">
+            <button id="toggleCalendarBtn" class="view-toggle-btn" title="月曆檢視">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </button>
+            <button id="openModalBtn" class="add-todo-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              新增待辦事項
+            </button>
+          </div>
+        </div>
+
+        <!-- 統計圓餅圖 -->
+        <div class="stats-section">
+          <div class="chart-card-mini">
+            <canvas id="todoChart"></canvas>
+          </div>
+          <div class="stats-info">
+            <div class="stat-item">
+              <span class="stat-dot completed"></span>
+              <span>已完成：<strong id="completedTasks">0</strong></span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-dot pending"></span>
+              <span>待完成：<strong id="pendingTasks">0</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 篩選按鈕 -->
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">全部</button>
+          <button class="filter-btn" data-filter="pending">待完成</button>
+          <button class="filter-btn" data-filter="completed">已完成</button>
+        </div>
+
+        <!-- 待辦清單 -->
+        <div class="todos-list" id="todosList">
+          <!-- 待辦事項將動態插入這裡 -->
+        </div>
+
+        <!-- 空狀態 -->
+        <div class="empty-state" id="emptyState">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <p>目前沒有待辦事項</p>
+          <span>開始新增你的第一個任務吧！</span>
+        </div>
+      </section>
+
+      <!-- 中間：月曆視圖 -->
+      <section class="center-content calendar-view" id="calendarView" style="display: none;">
+        <div class="content-header">
+          <div class="header-title">
+            <h2 id="calendarTitle">月曆檢視</h2>
+          </div>
+          <div class="header-actions">
+            <button id="toggleListBtn" class="view-toggle-btn" title="清單檢視">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+            <button id="openModalBtnCalendar" class="add-todo-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              新增待辦事項
+            </button>
+          </div>
+        </div>
+
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button id="prevMonth" class="month-nav-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <h3 id="currentMonth">2024年1月</h3>
+            <button id="nextMonth" class="month-nav-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- 月曆將動態生成 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 中間：團隊管理畫面 -->
+      <section class="center-content" id="teamManagementView" style="display: none;">
+        <div class="content-header">
+          <button class="back-btn" id="backToTodoBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            返回待辦清單
+          </button>
+          <div class="header-title">
+            <h2 id="managementTeamName">團隊管理</h2>
+            <p id="managementTeamDesc">管理團隊設定和成員</p>
+          </div>
+        </div>
+
+        <div class="team-management-content">
+          <div class="management-section">
+            <h3>團隊資訊</h3>
+            <div class="team-info-card">
+              <div class="info-row">
+                <label>團隊名稱</label>
+                <div class="info-value">
+                  <input type="text" id="editTeamNameInput" class="edit-input" disabled>
+                  <button class="icon-btn" id="editTeamNameBtn" title="編輯名稱">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="info-row">
+                <label>團隊顏色</label>
+                <div class="info-value">
+                  <input type="color" id="editTeamColorInput" class="color-input" disabled>
+                  <button class="icon-btn" id="editTeamColorBtn" title="編輯顏色">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="info-row">
+                <label>建立時間</label>
+                <span id="teamCreatedAt" class="info-text"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="management-section">
+            <div class="section-header">
+              <h3>團隊成員</h3>
+              <button class="add-member-btn" id="addMemberBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7" r="4"></circle>
+                  <line x1="20" y1="8" x2="20" y2="14"></line>
+                  <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+                新增成員
+              </button>
+            </div>
+            <div class="members-list" id="membersList">
+              <!-- 成員列表將動態插入這裡 -->
+            </div>
+          </div>
+
+          <div class="management-section">
+            <h3>危險操作</h3>
+            <div class="danger-zone">
+              <button class="danger-btn" id="deleteTeamBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                刪除團隊
+              </button>
+              <p class="danger-hint">刪除後將無法復原，團隊內的所有待辦事項也會一併刪除</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 中間：個人資料畫面 -->
+      <section class="center-content" id="userProfileView" style="display: none;">
+        <div class="content-header">
+          <button class="back-btn" id="backFromProfileBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            返回
+          </button>
+          <div class="header-title">
+            <h2>個人資料</h2>
+            <p>查看和管理您的帳號資訊</p>
+          </div>
+        </div>
+
+        <div class="profile-content">
+          <div class="management-section">
+            <h3>帳號資訊</h3>
+            <div class="team-info-card">
+              <div class="info-row">
+                <label>使用者名稱</label>
+                <div class="info-value">
+                  <span class="info-text" id="profileUsername"></span>
+                </div>
+              </div>
+              <div class="info-row">
+                <label>電子郵件</label>
+                <div class="info-value">
+                  <span class="info-text" id="profileEmail"></span>
+                </div>
+              </div>
+              <div class="info-row">
+                <label>註冊時間</label>
+                <div class="info-value">
+                  <span class="info-text" id="profileCreatedAt"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="management-section">
+            <h3>統計資訊</h3>
+            <div class="team-info-card">
+              <div class="info-row">
+                <label>個人待辦總數</label>
+                <div class="info-value">
+                  <span class="info-text" id="profilePersonalTodos">-</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <label>已加入的團隊</label>
+                <div class="info-value">
+                  <span class="info-text" id="profileTeamCount">-</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <label>已完成任務</label>
+                <div class="info-value">
+                  <span class="info-text" id="profileCompletedTodos">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右側：待辦事項詳情 -->
+      <aside class="right-sidebar" id="rightSidebar">
+        <div class="detail-placeholder" id="detailPlaceholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <p>選擇一個待辦事項查看詳情</p>
+        </div>
+        <div class="detail-content" id="detailContent" style="display: none;">
+          <div class="detail-header">
+            <h3>待辦詳情</h3>
+            <button class="close-detail-btn" id="closeDetailBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="detail-body">
+            <div class="detail-field">
+              <label>標題</label>
+              <h4 id="detailTitle"></h4>
+            </div>
+            <div class="detail-field">
+              <label>內容</label>
+              <div id="detailDescription" class="detail-description"></div>
+            </div>
+            <div class="detail-field">
+              <label>開始日期</label>
+              <span id="detailStartDate"></span>
+            </div>
+            <div class="detail-field">
+              <label>截止日期</label>
+              <span id="detailDueDate"></span>
+            </div>
+            <div class="detail-field">
+              <label>優先級</label>
+              <span id="detailPriority" class="priority-badge"></span>
+            </div>
+            <div class="detail-field" id="detailAssigneesField" style="display: none;">
+              <label>指派成員</label>
+              <div id="detailAssignees" class="assignees-display"></div>
+            </div>
+            <div class="detail-field" id="detailCreatorField" style="display: none;">
+              <label>建立者</label>
+              <div id="detailCreator" class="creator-display"></div>
+            </div>
+            <div class="detail-field">
+              <label>建立時間</label>
+              <span id="detailCreatedAt"></span>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="detail-btn edit-btn" id="detailEditBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              編輯
+            </button>
+            <button class="detail-btn delete-btn" id="detailDeleteBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              刪除
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- 訊息提示 -->
+  <div id="message" class="message"></div>
+
+  <!-- 新增團隊模態視窗 -->
+  <div id="teamModal" class="modal">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h2>新增團隊</h2>
+        <button class="close-modal" id="closeTeamModalBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="addTeamForm" class="modal-form">
+        <div class="form-group">
+          <label for="teamName">團隊名稱 <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="teamName" 
+            placeholder="請輸入團隊名稱..." 
+            required
+            maxlength="50"
+          >
+        </div>
+        <div class="form-group">
+          <label for="teamDescription">團隊描述</label>
+          <textarea 
+            id="teamDescription" 
+            placeholder="請輸入團隊描述（選填）..." 
+            rows="3"
+            maxlength="200"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="teamColor">團隊顏色</label>
+          <div class="color-picker">
+            <input type="color" id="teamColor" value="#667eea">
+            <span id="teamColorPreview">#667eea</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelTeamBtn">取消</button>
+          <button type="submit" class="btn-submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            確認新增
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 新增成員模態視窗 -->
+  <div id="addMemberModal" class="modal">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h2>新增團隊成員</h2>
+        <button class="close-modal" id="closeAddMemberModalBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="addMemberForm" class="modal-form">
+        <div class="form-group">
+          <label for="memberEmail">成員電子郵件 <span class="required">*</span></label>
+          <input 
+            type="email" 
+            id="memberEmail" 
+            placeholder="請輸入成員的電子郵件..." 
+            required
+          >
+          <p class="form-hint">輸入要加入團隊的成員電子郵件地址</p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelAddMemberBtn">取消</button>
+          <button type="submit" class="btn-submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            新增成員
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 新增待辦事項模態視窗 -->
+  <div id="todoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>新增待辦事項</h2>
+        <button class="close-modal" id="closeModalBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="addTodoForm" class="modal-form">
+        <div class="form-group">
+          <label for="todoTitle">標題 <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="todoTitle" 
+            placeholder="請輸入待辦事項標題..." 
+            required
+            maxlength="100"
+          >
+        </div>
+        <div class="form-group">
+          <label for="todoContent">內容</label>
+          <textarea 
+            id="todoContent" 
+            placeholder="請輸入詳細內容（選填）..." 
+            rows="5"
+            maxlength="500"
+          ></textarea>
+          <span class="char-count"><span id="charCount">0</span>/500</span>
+        </div>
+        <div class="form-group">
+          <label for="todoStartDate">開始時間</label>
+          <input 
+            type="datetime-local" 
+            id="todoStartDate"
+          >
+        </div>
+        <div class="form-group">
+          <label for="todoDueDate">截止時間</label>
+          <input 
+            type="datetime-local" 
+            id="todoDueDate"
+          >
+        </div>
+        <div class="form-group">
+          <label for="todoPriority">優先級</label>
+          <select id="todoPriority" class="priority-select">
+            <option value="low">🟢 低優先</option>
+            <option value="medium" selected>🟡 中優先</option>
+            <option value="high">🔴 高優先</option>
+          </select>
+        </div>
+        <div class="form-group" id="assigneeGroup" style="display: none;">
+          <label>指派給成員</label>
+          <div class="assignee-list" id="assigneeList">
+            <!-- 成員選項將動態插入這裡 -->
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelBtn">取消</button>
+          <button type="submit" class="btn-submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            確認新增
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 編輯待辦事項模態視窗 -->
+  <div id="editTodoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>編輯待辦事項</h2>
+        <button class="close-modal" id="closeEditModalBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="editTodoForm" class="modal-form">
+        <div class="form-group">
+          <label for="editTodoTitle">標題 <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="editTodoTitle" 
+            placeholder="請輸入待辦事項標題..." 
+            required
+            maxlength="100"
+          >
+        </div>
+        <div class="form-group">
+          <label for="editTodoContent">內容</label>
+          <textarea 
+            id="editTodoContent" 
+            placeholder="請輸入詳細內容（選填）..." 
+            rows="5"
+            maxlength="500"
+          ></textarea>
+          <span class="char-count"><span id="editCharCount">0</span>/500</span>
+        </div>
+        <div class="form-group">
+          <label for="editTodoStartDate">開始時間</label>
+          <input 
+            type="datetime-local" 
+            id="editTodoStartDate"
+          >
+        </div>
+        <div class="form-group">
+          <label for="editTodoDueDate">截止時間</label>
+          <input 
+            type="datetime-local" 
+            id="editTodoDueDate"
+          >
+        </div>
+        <div class="form-group">
+          <label for="editTodoPriority">優先級</label>
+          <select id="editTodoPriority" class="priority-select">
+            <option value="low">🟢 低優先</option>
+            <option value="medium">🟡 中優先</option>
+            <option value="high">🔴 高優先</option>
+          </select>
+        </div>
+        <div class="form-group" id="editAssigneeGroup" style="display: none;">
+          <label>指派給成員</label>
+          <div class="assignee-list" id="editAssigneeList">
+            <!-- 成員選項將動態插入這裡 -->
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelEditBtn">取消</button>
+          <button type="submit" class="btn-submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            確認更新
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 遮罩層(用於關閉側邊欄) -->
+  <div id="overlay" class="overlay"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="modules/main.js"></script>
+</body>
+</html>

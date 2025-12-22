@@ -1,0 +1,155 @@
+/* 右側邊欄 - 待辦詳情 */
+.right-sidebar {
+  background: white;
+  border-left: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.detail-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  padding: 2rem;
+  text-align: center;
+}
+
+.detail-placeholder svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+.detail-placeholder p {
+  font-size: 0.95rem;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.detail-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-header h3 {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 700;
+}
+
+.close-detail-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.close-detail-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #666;
+}
+
+.close-detail-btn:hover {
+  background: #e0e0e0;
+}
+
+.detail-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.detail-field {
+  margin-bottom: 1.5rem;
+}
+
+.detail-field label {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.detail-field h4 {
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.detail-description {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.detail-actions {
+  padding: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 0.8rem;
+}
+
+.detail-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.detail-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.detail-btn.edit-btn {
+  background: #667eea;
+  color: white;
+}
+
+.detail-btn.edit-btn:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.detail-btn.delete-btn {
+  background: #f5576c;
+  color: white;
+}
+
+.detail-btn.delete-btn:hover {
+  background: #e04455;
+  transform: translateY(-2px);
+}
