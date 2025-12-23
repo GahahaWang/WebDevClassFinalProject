@@ -39,22 +39,44 @@ router.post('/register', async (req, res) => {
 
   // 驗證輸入
   if (!validateRequiredFields({ username, email, password })) {
+    console.log('[註冊失敗] 缺少必填欄位 -', {
+      username: username || '未提供',
+      email: email || '未提供',
+      password: password ? '已提供' : '未提供',
+      timestamp: new Date().toISOString()
+    });
     return errorResponse(res, ERROR_MESSAGES.MISSING_FIELDS, HTTP_STATUS.BAD_REQUEST);
   }
 
   // 驗證使用者名稱格式
   if (!validateUsername(username)) {
+    console.log('[註冊失敗] 使用者名稱格式不正確 -', {
+      username: username,
+      reason: '使用者名稱僅能包含英數字、底線和連字號',
+      timestamp: new Date().toISOString()
+    });
     return errorResponse(res, ERROR_MESSAGES.INVALID_USERNAME, HTTP_STATUS.BAD_REQUEST);
   }
 
   // 驗證 Email 格式
   if (!validateEmail(email)) {
+    console.log('[註冊失敗] Email 格式不正確 -', {
+      email: email,
+      reason: 'Email 格式驗證失敗',
+      timestamp: new Date().toISOString()
+    });
     return errorResponse(res, ERROR_MESSAGES.INVALID_EMAIL, HTTP_STATUS.BAD_REQUEST);
   }
 
   // 驗證密碼強度
   const passwordValidation = validatePassword(password);
   if (!passwordValidation.valid) {
+    console.log('[註冊失敗] 密碼驗證失敗 -', {
+      username: username,
+      email: email,
+      reason: passwordValidation.message,
+      timestamp: new Date().toISOString()
+    });
     return errorResponse(res, passwordValidation.message, HTTP_STATUS.BAD_REQUEST);
   }
 
@@ -66,6 +88,14 @@ router.post('/register', async (req, res) => {
     );
 
     if (existingUser) {
+      console.log('[註冊失敗] 使用者已存在 -', {
+        attemptedUsername: username,
+        attemptedEmail: email,
+        existingUsername: existingUser.username,
+        existingEmail: existingUser.email,
+        conflictType: existingUser.username === username ? '使用者名稱重複' : 'Email 重複',
+        timestamp: new Date().toISOString()
+      });
       return errorResponse(res, ERROR_MESSAGES.USER_EXISTS, HTTP_STATUS.CONFLICT);
     }
 
@@ -99,6 +129,14 @@ router.post('/register', async (req, res) => {
       HTTP_STATUS.CREATED
     );
   } catch (error) {
+    console.log('[註冊失敗] 伺服器錯誤 -', {
+      username: username,
+      email: email,
+      errorName: error.name,
+      errorMessage: error.message,
+      errorStack: error.stack,
+      timestamp: new Date().toISOString()
+    });
     console.error('註冊錯誤:', error);
     return errorResponse(res, ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS.SERVER_ERROR);
   }

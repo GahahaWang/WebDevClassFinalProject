@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登入 / 註冊系統</title>
+  <title>TaskFlow - 智能待辦清單管理系統</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +12,8 @@
       <div class="signin-signup">
         <!-- 登入表單 -->
         <form id="loginForm" class="sign-in-form">
-          <h2 class="title">登入</h2>
+          <h2 class="title">登入待辦清單系統</h2>
+          <p style="color: #666; margin-bottom: 20px; font-size: 14px;">高效管理您的任務，讓生活更有條理</p>
           <div class="input-field">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -55,7 +56,8 @@
 
         <!-- 註冊表單 -->
         <form id="registerForm" class="sign-up-form">
-          <h2 class="title">註冊</h2>
+          <h2 class="title">註冊待辦清單系統</h2>
+          <p style="color: #666; margin-bottom: 20px; font-size: 14px;">開始您的高效任務管理之旅</p>
           <div class="input-field">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -102,22 +104,25 @@
             </a>
           </div>
         </form>
+        
+        <!-- 簡報連結 -->
+        <a href="https://drive.google.com/drive/folders/1nVcbMpz3yWqnHq7ZTcYCFEB3q3tr49zb?usp=sharing" target="_blank">簡報連結 https://drive.google.com/drive/folders/1nVcbMpz3yWqnHq7ZTcYCFEB3q3tr49zb?usp=sharing</a>
       </div>
     </div>
 
     <div class="panels-container">
       <div class="panel left-panel">
         <div class="content">
-          <h3>還沒有帳號嗎？</h3>
-          <p>立即註冊，體驗我們提供的完整功能！</p>
+          <h3>開始使用待辦清單系統</h3>
+          <p>立即註冊，輕鬆管理您的任務與日程！<br>✓ 任務分類管理 ✓ 進度追蹤 ✓ 團隊協作</p>
           <button class="btn transparent" id="sign-up-btn">註冊</button>
         </div>
         <img src="https://i.ibb.co/6HXL6q1/Privacy-policy-rafiki.png" class="image" alt="">
       </div>
       <div class="panel right-panel">
         <div class="content">
-          <h3>已經有帳號了？</h3>
-          <p>歡迎回來！請使用您的帳號登入。</p>
+          <h3>歡迎回到待辦清單系統</h3>
+          <p>繼續管理您的任務，提升工作效率！<br>讓每一天都充滿成就感</p>
           <button class="btn transparent" id="sign-in-btn">登入</button>
         </div>
         <img src="https://i.ibb.co/nP8H853/Mobile-login-rafiki.png" class="image" alt="">
@@ -167,7 +172,7 @@
       <button id="logoutBtn" class="btn solid">登出</button>
     </div>
   </div>
-
+  
   <script src="script.js"></script>
 </body>
 </html>

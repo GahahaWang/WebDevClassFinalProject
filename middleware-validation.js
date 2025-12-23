@@ -55,14 +55,20 @@ const validateTodoInput = (req, res, next) => {
  */
 const validateTeamInput = (req, res, next) => {
   const { name } = req.body;
+  const isUpdateOperation = req.method === 'PUT' || req.method === 'PATCH';
   
-  // 團隊名稱必填
-  if (!name || name.trim() === '') {
+  // 新增操作時，團隊名稱必填
+  if (!isUpdateOperation && (!name || name.trim() === '')) {
     return errorResponse(res, '團隊名稱不能為空', HTTP_STATUS.BAD_REQUEST);
   }
   
-  // 團隊名稱長度限制
-  if (name.length > 50) {
+  // 更新操作時，如果有提供 name，則驗證不能為空
+  if (isUpdateOperation && name !== undefined && name.trim() === '') {
+    return errorResponse(res, '團隊名稱不能為空', HTTP_STATUS.BAD_REQUEST);
+  }
+  
+  // 團隊名稱長度限制（如果有提供 name）
+  if (name && name.length > 50) {
     return errorResponse(res, '團隊名稱長度不能超過 50 個字元', HTTP_STATUS.BAD_REQUEST);
   }
   

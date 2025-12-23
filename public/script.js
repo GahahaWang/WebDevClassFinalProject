@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api/auth';
+const API_BASE_URL = 'https://webproject.gahaha.cc/api/auth';
 
 // DOM 元素
 const elements = {
@@ -183,6 +183,7 @@ elements.registerForm.addEventListener('submit', async (e) => {
     }
   } catch (error) {
     showMessage('註冊失敗，請稍後再試', 'error');
+    console.error('註冊錯誤:', error);
   }
 });
 

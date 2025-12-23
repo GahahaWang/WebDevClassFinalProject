@@ -1,8 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const path = require('path');
 const authRoutes = require('./routes');
 const todoRoutes = require('./todo-routes');
@@ -12,52 +10,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// CORS 配置
-const corsOptions = {
-  // 允許所有來源（不限制 CORS）
-  // 若要恢復白名單，改回 (origin, callback) => { ... }
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+// CORS 配置 - 完全開放
+app.use(cors());
 
-// Rate Limiting 配置
-const authLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 分鐘
-  max: 5, // 最多 5 次請求
-  message: { success: false, message: '請求次數過多，請稍後再試' },
-  standardHeaders: true,
-  legacyHeaders: false,
+// 明確禁用所有 CSP 和安全頭
+app.use((req, res, next) => {
+  res.removeHeader('Content-Security-Policy');
+  res.removeHeader('X-Content-Security-Policy');
+  res.removeHeader('X-WebKit-CSP');
+  res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;");
+  next();
 });
-
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分鐘
-  max: 100, // 最多 100 次請求
-  message: { success: false, message: '請求次數過多，請稍後再試' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// 安全性中間件
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://cdn.jsdelivr.net"]
-    }
-  },
-  crossOriginEmbedderPolicy: false
-}));
-app.use(cors(corsOptions));
 
 // 基本中間件
-app.use(express.json({ limit: '1mb' })); // 防止 DoS 攻擊
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 請求日誌（開發環境）
 if (NODE_ENV === 'development') {
@@ -70,10 +37,10 @@ if (NODE_ENV === 'development') {
 // 提供靜態檔案
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API 路由（含 Rate Limiting）
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/todos', apiLimiter, todoRoutes);
-app.use('/api/teams', apiLimiter, teamRoutes);
+// API 路由 - 移除 Rate Limiting
+app.use('/api/auth', authRoutes);
+app.use('/api/todos', todoRoutes);
+app.use('/api/teams', teamRoutes);
 
 // 首頁路由
 app.get('/', (req, res) => {
@@ -104,5 +71,6 @@ app.listen(PORT, () => {
   console.log(`\n伺服器運行在 http://localhost:${PORT}`);
   console.log(`環境: ${NODE_ENV}`);
   console.log(`登入/註冊: http://localhost:${PORT}`);
-  console.log(`待辦清單: http://localhost:${PORT}/todo\n`);
+  console.log(`待辦清單: http://localhost:${PORT}/todo`);
+  console.log(`Demo 演示: http://localhost:${PORT}/demo (無需登入)\n`);
 });

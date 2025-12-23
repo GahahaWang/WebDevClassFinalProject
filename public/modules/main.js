@@ -3,7 +3,7 @@ import { checkAuth } from './auth.js';
 import { loadTeams, loadTodos } from './api.js';
 import { initChart } from './chart.js';
 import { setupEventListeners, switchToCalendarView, switchToListView } from './events.js';
-import { selectTeam, showTeamSettings, showTodoDetail } from './ui.js';
+import { selectTeam, showTeamSettings, showTodoDetail, showUserProfile } from './ui.js';
 import { toggleTodo, removeMember } from './api.js';
 import { loadStateFromStorage, updateState } from './state.js';
 import { renderTeams } from './render.js';
@@ -42,6 +42,8 @@ async function restoreState() {
     // 恢復視圖
     if (state.currentView === 'calendar') {
       switchToCalendarView();
+    } else if (state.currentView === 'profile') {
+      showUserProfile();
     } else {
       switchToListView();
     }
